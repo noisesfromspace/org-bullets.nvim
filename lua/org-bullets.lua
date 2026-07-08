@@ -74,28 +74,33 @@ local function get_mark_positions(bufnr, start_row, end_row)
             local row, c0, _, c1 = node:range()
 
             -- Skip task list / checkbox items
+            local skip = false
             local parent = node:parent()
             if parent then
               for child in parent:iter_children() do
                 local ct = child:type()
                 if ct == "task_list_marker_unchecked" or ct == "task_list_marker_checked" then
-                  goto continue
+                  skip = true
+                  break
                 end
               end
             end
-            local line = (api.nvim_buf_get_lines(bufnr, row, row + 1, false) or {""})[1]
-            if line:sub(c1 + 1):match("^%s*%[.%]") then goto continue end
+            if not skip then
+              local line = (api.nvim_buf_get_lines(bufnr, row, row + 1, false) or {""})[1]
+              if line:sub(c1 + 1):match("^%s*%[.%]") then skip = true end
+            end
 
-            local t = node:type()
-            positions[#positions + 1] = {
-              item = treesitter.get_node_text(node, bufnr),
-              type = t,
-              level = list_level(node),
-              start_row = row,
-              start_col = c0,
-              end_col = c1,
-            }
-            ::continue::
+            if not skip then
+              local t = node:type()
+              positions[#positions + 1] = {
+                item = treesitter.get_node_text(node, bufnr),
+                type = t,
+                level = list_level(node),
+                start_row = row,
+                start_col = c0,
+                end_col = c1,
+              }
+            end
           end
         end
       end
