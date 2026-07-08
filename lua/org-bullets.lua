@@ -45,8 +45,7 @@ local parse = treesitter.query and treesitter.query.parse or treesitter.parse_qu
 
 local bullet_query = parse("markdown", [[
   (list_item
-    [(list_marker_minus) (list_marker_plus) (list_marker_star)
-     (list_marker_dot) (list_marker_parenthesis)] @bullet)
+    [(list_marker_minus) (list_marker_plus) (list_marker_star)] @bullet)
 ]])
 
 local codeblock_query = parse("markdown", "(fenced_code_block) @block")
