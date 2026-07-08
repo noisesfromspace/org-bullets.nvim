@@ -17,13 +17,12 @@ local function list_level(node)
   return n
 end
 
-local function set_mark(bufnr, virt_text, lnum, start_col, end_col, highlight)
+local function set_mark(bufnr, virt_text, lnum, start_col, end_col, _)
   if not virt_text then
     return
   end
   pcall(api.nvim_buf_set_extmark, bufnr, NAMESPACE, lnum, start_col, {
     end_col = end_col,
-    hl_group = highlight,
     virt_text = virt_text,
     virt_text_pos = "overlay",
     hl_mode = "combine",
