@@ -3,7 +3,7 @@ local M = {}
 local api, treesitter = vim.api, vim.treesitter
 
 local NAMESPACE = api.nvim_create_namespace("markdown-bullets")
-local icons = { "●", "○", "◆", "◇" }
+local icons = { "✸", "✿", "✦", "✧" }
 
 ---Count ancestor list nodes for nesting level
 local function list_level(node)
