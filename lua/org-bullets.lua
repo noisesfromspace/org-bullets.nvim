@@ -50,7 +50,6 @@ local bullet_query = parse("markdown", [[
 
 local codeblock_query = parse("markdown", "(fenced_code_block) @block")
 local codefence_query = parse("markdown", "(fenced_code_block_delimiter) @fence")
-local heading_query = parse("markdown", "(atx_heading) @heading")
 
 local highlight_groups = {
   list_marker_minus = "MdBulletsDash",
@@ -113,14 +112,6 @@ function M.setup(conf)
     api.nvim_set_hl(0, hl, { link = "NonText", default = true })
   end
   api.nvim_set_hl(0, "MdBulletsCodeBlock", { link = "CursorLine", default = true })
-  for i = 1, 6 do
-    api.nvim_set_hl(0, "MdBulletsH" .. i, {
-      link = "@markup.heading." .. i .. ".markdown",
-      underline = i <= 2,
-      default = true,
-    })
-  end
-  api.nvim_set_hl(0, "MdBulletsHeading", { link = "MdBulletsH1", default = true })
 
   -- Smart Enter
   api.nvim_create_autocmd("FileType", {
@@ -188,8 +179,6 @@ function M.setup(conf)
         parser:parse()
         parser:for_each_tree(function(tstree)
           local root = tstree:root()
-
-          -- Code blocks
           for _, node in codeblock_query:iter_captures(root, bufnr, topline, botline) do
             local srow, _, erow = node:range()
             set_hl(bufnr, srow, 0, {
@@ -201,24 +190,6 @@ function M.setup(conf)
           for _, node in codefence_query:iter_captures(root, bufnr, topline, botline) do
             local row, c0, _, c1 = node:range()
             set_hl(bufnr, row, c0, { end_col = c1, conceal = "" })
-          end
-
-          -- Headings: conceal # markers, underline h1/h2
-          for _, node in heading_query:iter_captures(root, bufnr, topline, botline) do
-            local row = node:range()
-            -- Find marker child to get level and conceal it
-            local level = 1
-            for child in node:iter_children() do
-              local ct = child:type()
-              local n = ct:match("^atx_h(%d)_marker$")
-              if n then
-                level = tonumber(n)
-                local _, c0, _, c1 = child:range()
-                set_hl(bufnr, row, c0, { end_col = c1, conceal = "" })
-              end
-            end
-            -- Style the heading line (explicit end_col instead of hl_eol)
-            set_hl(bufnr, row, 0, { hl_group = "MdBulletsH" .. level, end_col = 999 })
           end
         end)
       end
