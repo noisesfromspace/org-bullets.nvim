@@ -57,13 +57,6 @@ local bullet_query = parse(
 
 local codeblock_query = parse("markdown", "(fenced_code_block) @block")
 local codefence_query = parse("markdown", "(fenced_code_block_delimiter) @fence")
-local heading_marker_query = parse(
-  "markdown",
-  [[
-  [(atx_h1_marker) (atx_h2_marker) (atx_h3_marker)
-   (atx_h4_marker) (atx_h5_marker) (atx_h6_marker)] @marker
-]]
-)
 
 local highlight_groups = {
   list_marker_minus = "MdBulletsDash",
@@ -225,10 +218,6 @@ function M.setup(conf)
             })
           end
           for _, node in codefence_query:iter_captures(root, bufnr, topline, botline) do
-            local row, c0, _, c1 = node:range()
-            set_hl(bufnr, row, c0, { end_col = c1, conceal = "" })
-          end
-          for _, node in heading_marker_query:iter_captures(root, bufnr, topline, botline) do
             local row, c0, _, c1 = node:range()
             set_hl(bufnr, row, c0, { end_col = c1, conceal = "" })
           end
