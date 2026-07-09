@@ -127,6 +127,8 @@ function M.setup(conf)
     api.nvim_set_hl(0, hl, { link = "NonText", default = true })
   end
   api.nvim_set_hl(0, "MdBulletsCodeBlock", { link = "CursorLine", default = true })
+  api.nvim_set_hl(0, "@markup.heading.1.markdown", { bold = true, underline = true, default = true })
+  api.nvim_set_hl(0, "@markup.heading.2.markdown", { underline = true, default = true })
   api.nvim_set_hl(0, "@markup.heading.1.markdown", { underline = true, default = true })
   api.nvim_set_hl(0, "@markup.heading.2.markdown", { underline = true, default = true })
 
